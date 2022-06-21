@@ -2,6 +2,7 @@ package com.sy.board.v1.service;
 
 import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +45,7 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 단건 조회")
+    @DisplayName("글 1건 조회")
     void getPost() {
         // given
         Post post = Post.builder()
@@ -54,12 +55,12 @@ class PostServiceTest {
         postRepository.save(post);
 
         // when
-        Post savePost = postService.get(post.getId());
+        PostResponseDTO response = postService.get(post.getId());
 
         // then
-        assertThat(savePost).isNotNull();
+        assertThat(response).isNotNull();
         assertThat(postRepository.count()).isEqualTo(1L);
-        assertThat(savePost.getTitle()).isEqualTo("제목입니다.");
-        assertThat(savePost.getContent()).isEqualTo("내용입니다.");
+        assertThat(response.getTitle()).isEqualTo("제목입니다.");
+        assertThat(response.getContent()).isEqualTo("내용입니다.");
     }
 }

@@ -2,6 +2,7 @@ package com.sy.board.v1.controller;
 
 import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class PostController {
     }
 
     @GetMapping("/posts/{postId}")
-    public Post getPost(@PathVariable Long postId) {
+    public PostResponseDTO getPost(@PathVariable Long postId) {
         return postService.get(postId);
     }
 }
