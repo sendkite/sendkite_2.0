@@ -1,4 +1,4 @@
-package com.sy.board.controller;
+package com.sy.board.v1.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sy.board.domain.Post;
@@ -11,11 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -53,12 +54,12 @@ class PostControllerTest {
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string("{\"postId\":1}"))
-                .andDo(MockMvcResultHandlers.print());
+                .andDo(print());
     }
 
     @Test
     @DisplayName("/posts 요청시 제목은 필수")
-    void saveWithoutTitle() throws Exception {
+    void savePostWithoutTitle() throws Exception {
         // given
         PostDTO req = PostDTO.builder()
                 .content("내용입니다.")
@@ -74,12 +75,12 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andExpect(jsonPath("$.validation.title").value("제목은 필수입니다."))
-                .andDo(MockMvcResultHandlers.print());
+                .andDo(print());
     }
 
     @Test
     @DisplayName("/posts 요청시 DB 값 저장")
-    void saveWithDB() throws Exception {
+    void savePostWithDB() throws Exception {
         // given
         PostDTO req = PostDTO.builder()
                 .title("제목입니다.")
@@ -93,11 +94,31 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andDo(print());
         // then
         assertThat(postRepository.count()).isEqualTo(1L);
         Post post = postRepository.findAll().get(0);
         assertThat(post.getTitle()).isEqualTo("제목입니다.");
         assertThat(post.getContent()).isEqualTo("내용입니다.");
+    }
+
+    @Test
+    @DisplayName("글 1건 조회")
+    void getPost() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+        postRepository.save(post);
+
+        // when + then
+        mockMvc.perform(get("/posts/{postId}", post.getId())
+                    .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(post.getId()))
+                .andExpect(jsonPath("$.title").value(post.getTitle()))
+                .andExpect(jsonPath("$.content").value(post.getContent()))
+                .andDo(print());
     }
 }

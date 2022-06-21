@@ -1,12 +1,11 @@
 package com.sy.board.v1.controller;
 
+import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
 import com.sy.board.v1.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -19,8 +18,13 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")
-    public Map get(@RequestBody @Valid PostDTO postDTO) {
+    public Map post(@RequestBody @Valid PostDTO postDTO) {
         Long postId = postService.write(postDTO);
         return Map.of("postId", postId);
+    }
+
+    @GetMapping("/posts/{postId}")
+    public Post getPost(@PathVariable Long postId) {
+        return postService.get(postId);
     }
 }
