@@ -52,7 +52,7 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{}"))
+                .andExpect(content().string("{\"postId\":1}"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
