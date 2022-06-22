@@ -9,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,12 +85,13 @@ class PostServiceTest {
         postRepository.saveAll(reqPosts);
 
         // when
-        List<PostResponseDTO> posts = postService.getList(0);
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "id"));
+        List<PostResponseDTO> posts = postService.getList(pageable);
 
         // then
         assertThat(posts.size()).isEqualTo(5);
-        assertThat(posts.get(0).getTitle()).isEqualTo("제목 1");
-        assertThat(posts.get(4).getTitle()).isEqualTo("제목 5");
+        assertThat(posts.get(0).getTitle()).isEqualTo("제목 30");
+        assertThat(posts.get(4).getTitle()).isEqualTo("제목 26");
 
     }
 }

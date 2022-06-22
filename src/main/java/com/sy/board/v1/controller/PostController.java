@@ -5,6 +5,8 @@ import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +32,7 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<PostResponseDTO> getPosts() {
-        return postService.getList(1);
+    public List<PostResponseDTO> getPosts(@PageableDefault(size = 5) Pageable pageable) {
+        return postService.getList(pageable);
     }
 }
