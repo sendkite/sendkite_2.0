@@ -127,17 +127,15 @@ class PostControllerTest {
     @DisplayName("글 목록 조회")
     void getPosts() throws Exception {
         // given
-        Post post1 = Post.builder()
+        Post post1 = postRepository.save(Post.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
-                .build();
-        postRepository.save(post1);
+                .build());
 
-        Post post2 = Post.builder()
+        Post post2 = postRepository.save(Post.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
-                .build();
-        postRepository.save(post2);
+                .build());
 
         // when + then
         mockMvc.perform(get("/posts")

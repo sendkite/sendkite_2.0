@@ -6,6 +6,8 @@ import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,8 +40,10 @@ public class PostService {
                 .build();
     }
 
-    public List<PostResponseDTO> getList() {
-        return postRepository.findAll().stream()
-                .map(PostResponseDTO::new).collect(Collectors.toList());
+    public List<PostResponseDTO> getList(int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        return postRepository.findAll(pageable).stream()
+                .map(PostResponseDTO::new)
+                .collect(Collectors.toList());
     }
 }

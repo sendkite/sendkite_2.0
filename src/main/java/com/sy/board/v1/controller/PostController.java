@@ -1,6 +1,5 @@
 package com.sy.board.v1.controller;
 
-import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.service.PostService;
@@ -32,6 +31,6 @@ public class PostController {
 
     @GetMapping("/posts")
     public List<PostResponseDTO> getPosts() {
-        return postService.getList();
+        return postService.getList(1);
     }
 }
