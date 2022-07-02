@@ -1,6 +1,7 @@
 package com.sy.board.v1.controller;
 
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -34,5 +35,10 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponseDTO> getPosts(@PageableDefault(size = 5) Pageable pageable) {
         return postService.getList(pageable);
+    }
+
+    @GetMapping("/v2/posts")
+    public List<PostResponseDTO> getPostsWithQueryDsl(@ModelAttribute PostSearch postSearch) {
+        return postService.getListWithQueryDsl(postSearch);
     }
 }

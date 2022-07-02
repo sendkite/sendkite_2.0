@@ -155,4 +155,32 @@ class PostControllerTest {
                 .andExpect(jsonPath("$[4].content").value("내용 26"))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("쿼리 DSL 글 목록 1페이지 조회")
+    void getPostsV2() throws Exception {
+        // given
+        List<Post> reqPosts = IntStream.range(1, 31)
+                .mapToObj(i ->
+                        Post.builder()
+                                .title("제목 " + i)
+                                .content("내용 " + i)
+                                .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(reqPosts);
+
+
+        // when + then
+        mockMvc.perform(get("/v2/posts?page=1&size=10")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].id").value(30))
+                .andExpect(jsonPath("$[0].title").value("제목 30"))
+                .andExpect(jsonPath("$[0].content").value("내용 30"))
+                .andExpect(jsonPath("$[4].id").value(26))
+                .andExpect(jsonPath("$[4].title").value("제목 26"))
+                .andExpect(jsonPath("$[4].content").value("내용 26"))
+                .andDo(print());
+    }
 }

@@ -2,6 +2,7 @@ package com.sy.board.v1.service;
 
 import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,12 @@ public class PostService {
     public List<PostResponseDTO> getList(Pageable pageable) {
 //        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
         return postRepository.findAll(pageable).stream()
+                .map(PostResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<PostResponseDTO> getListWithQueryDsl(PostSearch postSearch) {
+        return postRepository.getList(postSearch).stream()
                 .map(PostResponseDTO::new)
                 .collect(Collectors.toList());
     }

@@ -2,6 +2,7 @@ package com.sy.board.v1.service;
 
 import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,5 +94,29 @@ class PostServiceTest {
         assertThat(posts.get(0).getTitle()).isEqualTo("제목 30");
         assertThat(posts.get(4).getTitle()).isEqualTo("제목 26");
 
+    }
+
+    @Test
+    @DisplayName("글 1페이지 목록 조회")
+    void getPostsV2() {
+        // given
+        List<Post> reqPosts = IntStream.range(1, 31)
+                .mapToObj(i ->
+                        Post.builder()
+                                .title("제목 " + i)
+                                .content("내용 " + i)
+                                .build())
+                .collect(Collectors.toList());
+        postRepository.saveAll(reqPosts);
+
+        PostSearch postSearch = PostSearch.builder()
+                .page(1)
+                .build();
+        List<Post> posts = postRepository.getList(postSearch);
+
+        // then
+        assertThat(posts.size()).isEqualTo(10);
+        assertThat(posts.get(0).getTitle()).isEqualTo("제목 30");
+        assertThat(posts.get(4).getTitle()).isEqualTo("제목 26");
     }
 }
