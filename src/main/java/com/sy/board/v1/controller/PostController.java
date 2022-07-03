@@ -1,6 +1,7 @@
 package com.sy.board.v1.controller;
 
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.service.PostService;
@@ -40,5 +41,10 @@ public class PostController {
     @GetMapping("/v2/posts")
     public List<PostResponseDTO> getPostsWithQueryDsl(@ModelAttribute PostSearch postSearch) {
         return postService.getListWithQueryDsl(postSearch);
+    }
+
+    @PatchMapping("/posts/{postId}")
+    public void editPost(@PathVariable Long postId, @RequestBody @Valid PostEditDTO postEditDTO) {
+        postService.edit(postId, postEditDTO);
     }
 }

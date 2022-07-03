@@ -1,5 +1,6 @@
 package com.sy.board.domain;
 
+import com.sy.board.dto.request.PostEditDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,4 +25,16 @@ public class Post {
         this.title = title;
         this.content = content;
     }
+
+    public PostEditor.PostEditorBuilder toEditor() {
+        return PostEditor.builder()
+                .title(title)
+                .content(content);
+    }
+
+    public void edit(PostEditor postEditor) {
+        this.title = postEditor.getTitle();
+        this.content = postEditor.getContent();
+    }
+
 }

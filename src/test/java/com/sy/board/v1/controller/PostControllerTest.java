@@ -3,6 +3,7 @@ package com.sy.board.v1.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.v1.repository.PostRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +21,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -181,6 +181,29 @@ class PostControllerTest {
                 .andExpect(jsonPath("$[4].id").value(26))
                 .andExpect(jsonPath("$[4].title").value("제목 26"))
                 .andExpect(jsonPath("$[4].content").value("내용 26"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 수정")
+    void editPosts() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("안녕하세요")
+                .content("좋은 아침 입니다.")
+                .build();
+        postRepository.save(post);
+
+        // when
+        PostEditDTO postEdit = PostEditDTO.builder()
+                .title("안녕하세요.")
+                .content("점심먹자")
+                .build();
+
+        mockMvc.perform(patch("/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }

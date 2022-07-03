@@ -1,7 +1,9 @@
 package com.sy.board.v1.service;
 
 import com.sy.board.domain.Post;
+import com.sy.board.domain.PostEditor;
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,5 +56,19 @@ public class PostService {
         return postRepository.getList(postSearch).stream()
                 .map(PostResponseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void edit(Long id, PostEditDTO postEditDTO) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+        PostEditor postEditor = editorBuilder
+                .title(postEditDTO.getTitle())
+                .content(postEditDTO.getContent())
+                .build();
+
+        post.edit(postEditor);
     }
 }

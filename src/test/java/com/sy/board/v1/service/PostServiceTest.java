@@ -2,6 +2,7 @@ package com.sy.board.v1.service;
 
 import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
@@ -118,5 +119,30 @@ class PostServiceTest {
         assertThat(posts.size()).isEqualTo(10);
         assertThat(posts.get(0).getTitle()).isEqualTo("제목 30");
         assertThat(posts.get(4).getTitle()).isEqualTo("제목 26");
+    }
+
+
+    @Test
+    @DisplayName("글 제목 수정 테스트")
+    void editPost() {
+        // given
+       Post post = Post.builder()
+               .title("스프링 연습")
+               .content("스프링 어려워")
+               .build();
+
+        postRepository.save(post);
+
+        PostEditDTO postEdit = PostEditDTO.builder()
+                .title("연습 끝")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+        assertThat(changedPost.getTitle()).isEqualTo("연습 끝");
     }
 }
