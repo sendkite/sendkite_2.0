@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
 class PostServiceTest {
 
     @Autowired
@@ -130,7 +132,6 @@ class PostServiceTest {
                .title("스프링 연습")
                .content("스프링 어려워")
                .build();
-
         postRepository.save(post);
 
         PostEditDTO postEdit = PostEditDTO.builder()
@@ -144,5 +145,23 @@ class PostServiceTest {
         Post changedPost = postRepository.findById(post.getId())
                 .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
         assertThat(changedPost.getTitle()).isEqualTo("연습 끝");
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void deletePost() {
+        // given
+        Post post = Post.builder()
+                .title("스프링 연습")
+                .content("스프링 어려워")
+                .build();
+        postRepository.save(post);
+
+        // when
+        postService.delete(post.getId());
+
+        // then
+        assertThat(postRepository.count()).isEqualTo(0);
+
     }
 }

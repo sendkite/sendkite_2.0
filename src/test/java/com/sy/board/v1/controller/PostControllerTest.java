@@ -5,7 +5,6 @@ import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.v1.repository.PostRepository;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,6 +42,7 @@ class PostControllerTest {
         postRepository.deleteAll();
     }
 
+
     @Test
     @DisplayName("/posts 요청 동작")
     void testPostCtr() throws Exception {
@@ -58,8 +58,8 @@ class PostControllerTest {
         mockMvc.perform(post("/posts")
                         .contentType(APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk())
                 .andExpect(content().string("{\"postId\":1}"))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
@@ -203,6 +203,23 @@ class PostControllerTest {
         mockMvc.perform(patch("/posts/{postId}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 삭제")
+    void deletePost() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("안녕하세요")
+                .content("좋은 아침 입니다.")
+                .build();
+        postRepository.save(post);
+
+        // when + then
+        mockMvc.perform(delete("/posts/{postId}", post.getId())
+                .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

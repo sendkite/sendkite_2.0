@@ -9,15 +9,14 @@ import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -58,7 +57,6 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public void edit(Long id, PostEditDTO postEditDTO) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
@@ -70,5 +68,11 @@ public class PostService {
                 .build();
 
         post.edit(postEditor);
+    }
+
+    public void delete(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+        postRepository.delete(post);
     }
 }
