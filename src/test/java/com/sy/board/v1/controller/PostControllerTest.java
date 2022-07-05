@@ -5,13 +5,14 @@ import com.sy.board.domain.Post;
 import com.sy.board.dto.request.PostDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.v1.repository.PostRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class PostControllerTest {
@@ -37,30 +39,9 @@ class PostControllerTest {
     @Autowired
     private PostRepository postRepository;
 
-    @BeforeEach
+    @AfterEach
     void clean() {
         postRepository.deleteAll();
-    }
-
-
-    @Test
-    @DisplayName("/posts 요청 동작")
-    void testPostCtr() throws Exception {
-        // given
-        PostDTO req = PostDTO.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
-                .build();
-
-        String json = objectMapper.writeValueAsString(req);
-
-        // when
-        mockMvc.perform(post("/posts")
-                        .contentType(APPLICATION_JSON)
-                        .content(json))
-                .andExpect(content().string("{\"postId\":1}"))
-                .andExpect(status().isOk())
-                .andDo(print());
     }
 
     @Test
@@ -141,7 +122,6 @@ class PostControllerTest {
                 .collect(Collectors.toList());
         postRepository.saveAll(reqPosts);
 
-
         // when + then
         mockMvc.perform(get("/posts?page=0&sort=id,desc&size=5")
                         .contentType(APPLICATION_JSON))
@@ -168,7 +148,6 @@ class PostControllerTest {
                                 .build())
                 .collect(Collectors.toList());
         postRepository.saveAll(reqPosts);
-
 
         // when + then
         mockMvc.perform(get("/v2/posts?page=1&size=10")

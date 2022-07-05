@@ -6,6 +6,7 @@ import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
 import com.sy.board.v1.repository.PostRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -163,5 +164,22 @@ class PostServiceTest {
         // then
         assertThat(postRepository.count()).isEqualTo(0);
 
+    }
+
+    @Test
+    @DisplayName("글 1건 조회 -- 실패")
+    void getPost2() {
+        // given
+        Post post = Post.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+        postRepository.save(post);
+
+        // when + then
+        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            postService.get(post.getId() + 1L);
+        });
+        Assertions.assertEquals("존재하지 않는 글입니다.", e.getMessage());
     }
 }
