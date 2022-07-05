@@ -6,6 +6,7 @@ import com.sy.board.dto.request.PostDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
+import com.sy.board.exception.PostNotFound;
 import com.sy.board.v1.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class PostService {
 
     public PostResponseDTO get(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         return PostResponseDTO.builder()
                 .id(post.getId())
@@ -59,7 +60,7 @@ public class PostService {
 
     public void edit(Long id, PostEditDTO postEditDTO) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
         PostEditor postEditor = editorBuilder
@@ -72,7 +73,7 @@ public class PostService {
 
     public void delete(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
         postRepository.delete(post);
     }
 }

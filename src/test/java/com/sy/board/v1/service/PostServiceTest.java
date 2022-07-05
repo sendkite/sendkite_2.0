@@ -5,6 +5,7 @@ import com.sy.board.dto.request.PostDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
+import com.sy.board.exception.PostNotFound;
 import com.sy.board.v1.repository.PostRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,7 +145,7 @@ class PostServiceTest {
 
         // then
         Post changedPost = postRepository.findById(post.getId())
-                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id=" + post.getId()));
+                .orElseThrow(PostNotFound::new);
         assertThat(changedPost.getTitle()).isEqualTo("연습 끝");
     }
 
@@ -177,9 +178,45 @@ class PostServiceTest {
         postRepository.save(post);
 
         // when + then
-        IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(PostNotFound.class, () -> {
             postService.get(post.getId() + 1L);
         });
-        Assertions.assertEquals("존재하지 않는 글입니다.", e.getMessage());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정 테스트 -- 실패")
+    void editPostFail() {
+        // given
+        Post post = Post.builder()
+                .title("스프링 연습")
+                .content("스프링 어려워")
+                .build();
+        postRepository.save(post);
+
+        PostEditDTO postEdit = PostEditDTO.builder()
+                .title("연습 끝")
+                .build();
+
+        // when + then
+
+        Assertions.assertThrows(PostNotFound.class, () -> {
+            postService.edit(post.getId() + 1L , postEdit);
+        });
+    }
+
+    @Test
+    @DisplayName("게시글 삭제 -- 실패")
+    void deletePostFail() {
+        // given
+        Post post = Post.builder()
+                .title("스프링 연습")
+                .content("스프링 어려워")
+                .build();
+        postRepository.save(post);
+
+        // when + then
+        Assertions.assertThrows(PostNotFound.class, () -> {
+            postService.delete(post.getId() + 1L);
+        });
     }
 }
