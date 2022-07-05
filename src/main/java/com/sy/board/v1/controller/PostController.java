@@ -1,6 +1,6 @@
 package com.sy.board.v1.controller;
 
-import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostCreateDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
@@ -23,7 +23,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts")
-    public Map post(@RequestBody @Valid PostDTO postDTO) {
+    public Map post(@Valid @RequestBody PostCreateDTO postDTO) {
+        postDTO.validate();
         Long postId = postService.write(postDTO);
         return Map.of("postId", postId);
     }

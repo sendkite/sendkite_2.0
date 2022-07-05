@@ -2,7 +2,7 @@ package com.sy.board.v1.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sy.board.domain.Post;
-import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostCreateDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.v1.repository.PostRepository;
 import org.junit.jupiter.api.*;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,7 +47,7 @@ class PostControllerTest {
     @DisplayName("/posts 요청시 제목은 필수")
     void savePostWithoutTitle() throws Exception {
         // given
-        PostDTO req = PostDTO.builder()
+        PostCreateDTO req = PostCreateDTO.builder()
                 .content("내용입니다.")
                 .build();
 
@@ -59,8 +58,6 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andExpect(jsonPath("$.validation.title").value("제목은 필수입니다."))
                 .andDo(print());
     }
@@ -69,7 +66,7 @@ class PostControllerTest {
     @DisplayName("/posts 요청시 DB 값 저장")
     void savePostWithDB() throws Exception {
         // given
-        PostDTO req = PostDTO.builder()
+        PostCreateDTO req = PostCreateDTO.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .build();
@@ -127,10 +124,8 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(5)))
-                .andExpect(jsonPath("$[0].id").value(30))
                 .andExpect(jsonPath("$[0].title").value("제목 30"))
                 .andExpect(jsonPath("$[0].content").value("내용 30"))
-                .andExpect(jsonPath("$[4].id").value(26))
                 .andExpect(jsonPath("$[4].title").value("제목 26"))
                 .andExpect(jsonPath("$[4].content").value("내용 26"))
                 .andDo(print());
@@ -154,10 +149,8 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(10)))
-                .andExpect(jsonPath("$[0].id").value(30))
                 .andExpect(jsonPath("$[0].title").value("제목 30"))
                 .andExpect(jsonPath("$[0].content").value("내용 30"))
-                .andExpect(jsonPath("$[4].id").value(26))
                 .andExpect(jsonPath("$[4].title").value("제목 26"))
                 .andExpect(jsonPath("$[4].content").value("내용 26"))
                 .andDo(print());
@@ -200,6 +193,60 @@ class PostControllerTest {
         mockMvc.perform(delete("/posts/{postId}", post.getId())
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시물 조회 실패")
+    void getPostFail() throws Exception {
+        // when + then
+        mockMvc.perform(get("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시물 수정 실패")
+    void editPostFail() throws Exception {
+        PostEditDTO postEdit = PostEditDTO.builder()
+                .title("안녕하세요.")
+                .content("점심먹자")
+                .build();
+        // when + then
+        mockMvc.perform(patch("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("게시물 삭제 실패")
+    void deletePostFail() throws Exception {
+        // when + then
+        mockMvc.perform(delete("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("욕설 제목하기")
+    void badWords() throws Exception {
+        // given
+        PostCreateDTO req = PostCreateDTO.builder()
+                .title("씨발아")
+                .content("졸려라")
+                .build();
+
+        String json = objectMapper.writeValueAsString(req);
+
+        // when + then
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 }

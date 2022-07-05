@@ -2,7 +2,7 @@ package com.sy.board.v1.service;
 
 import com.sy.board.domain.Post;
 import com.sy.board.domain.PostEditor;
-import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostCreateDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
@@ -25,7 +25,7 @@ public class PostService {
 
     private final PostRepository postRepository;
 
-    public Long write(PostDTO postDTO) {
+    public Long write(PostCreateDTO postDTO) {
         Post post = Post.builder()
                 .title(postDTO.getTitle())
                 .content(postDTO.getContent())

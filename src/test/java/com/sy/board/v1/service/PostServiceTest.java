@@ -1,7 +1,7 @@
 package com.sy.board.v1.service;
 
 import com.sy.board.domain.Post;
-import com.sy.board.dto.request.PostDTO;
+import com.sy.board.dto.request.PostCreateDTO;
 import com.sy.board.dto.request.PostEditDTO;
 import com.sy.board.dto.request.PostSearch;
 import com.sy.board.dto.response.PostResponseDTO;
@@ -43,7 +43,7 @@ class PostServiceTest {
     @DisplayName("글 작성")
     void writePost() {
         // given
-        PostDTO post = PostDTO.builder()
+        PostCreateDTO post = PostCreateDTO.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .build();
@@ -178,9 +178,7 @@ class PostServiceTest {
         postRepository.save(post);
 
         // when + then
-        Assertions.assertThrows(PostNotFound.class, () -> {
-            postService.get(post.getId() + 1L);
-        });
+        Assertions.assertThrows(PostNotFound.class, () -> postService.get(post.getId() + 1L));
     }
 
     @Test
@@ -199,9 +197,7 @@ class PostServiceTest {
 
         // when + then
 
-        Assertions.assertThrows(PostNotFound.class, () -> {
-            postService.edit(post.getId() + 1L , postEdit);
-        });
+        Assertions.assertThrows(PostNotFound.class, () -> postService.edit(post.getId() + 1L , postEdit));
     }
 
     @Test
@@ -215,8 +211,6 @@ class PostServiceTest {
         postRepository.save(post);
 
         // when + then
-        Assertions.assertThrows(PostNotFound.class, () -> {
-            postService.delete(post.getId() + 1L);
-        });
+        Assertions.assertThrows(PostNotFound.class, () -> postService.delete(post.getId() + 1L));
     }
 }
