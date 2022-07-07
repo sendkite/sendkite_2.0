@@ -1,7 +1,5 @@
 package com.sy.board.exception.common;
 
-import com.sy.board.exception.InvalidRequest;
-import com.sy.board.exception.PostNotFound;
 import com.sy.board.exception.SendkiteException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,8 +23,6 @@ public class ExceptionController {
                 .code("400")
                 .message("잘못된 요청입니다.")
                 .build();
-
-
 
         for (FieldError fieldError : e.getFieldErrors()) {
             response.addValidation(fieldError.getField(), fieldError.getDefaultMessage());

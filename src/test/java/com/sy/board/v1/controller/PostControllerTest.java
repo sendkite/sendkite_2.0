@@ -48,7 +48,6 @@ class PostControllerTest {
     void savePostWithoutTitle() throws Exception {
         // given
         PostCreateDTO req = PostCreateDTO.builder()
-                .content("내용입니다.")
                 .build();
 
         String json = objectMapper.writeValueAsString(req);
@@ -59,6 +58,7 @@ class PostControllerTest {
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.validation.title").value("제목은 필수입니다."))
+                .andExpect(jsonPath("$.validation.content").value("내용은 필수입니다."))
                 .andDo(print());
     }
 
